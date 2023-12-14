@@ -2,7 +2,7 @@
 
 🌟 Comprehensive web and mobile application to monitor and improve health and fitness 🌟
 
-![Health and Fitness Tracker Logo](C:\Users\ASUS\Desktop\fitzen-logo.jpg)
+![Health and Fitness Tracker Logo](fitzen-logo.jpg)
 
 ## Overview
 

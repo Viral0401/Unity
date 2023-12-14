@@ -10,15 +10,16 @@ Health and Fitness Tracker is your all-in-one solution for a healthier lifestyle
 
 ## Features
 
+- 🏋️‍♂️ **AI Exercise Buddy:** Your virtual fitness companion for guided exercises and workouts.
 - 🧘 **Yoga Pose Detection:** Real-time feedback on yoga poses for improved practice.
 - 🧠 **Mental Health Chatbot:** Personalized support for mental well-being through natural language processing.
 - 🍏 **Diet Plan Generator:** Tailored diet plans based on individual health goals and preferences.
 - 💪 **Workout Plan Generator:** Personalized workout plans adaptable to your progress.
+- 📊 **Dashboard with KPIs:** Monitor your progress through an intuitive dashboard.
 - 🎉 **Reward System:** Stay motivated with rewards for achieving fitness milestones.
 - 📱 **Mobile App Food Scanner:** Scan food items for instant calorie and nutritional information.
 - 🍽️ **Nutrient Information:** Detailed breakdown of nutrients in each food item.
 - 🌈 **Live Therapy Sessions:** Access live therapy sessions for mental health support.
-- 📊 **Dashboard with KPIs:** Monitor your progress through an intuitive dashboard.
 
 ## Getting Started
 

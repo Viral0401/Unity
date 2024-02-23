@@ -6,53 +6,37 @@ using UnityEngine.XR.ARSubsystems;
 
 public class ARPlacement : MonoBehaviour
 {
-
     public GameObject arObjectToSpawn;
     public GameObject placementIndicator;
     private GameObject spawnedObject;
-    private Pose PlacementPose;
-    private ARRaycastManager aRRaycastManager;
+    private Pose placementPose;
+    private ARRaycastManager arRaycastManager;
     private bool placementPoseIsValid = false;
-    public Camera camera;
-
-    [SerializeField] private float xOffset;
-    [SerializeField] private float rotationX;
-    [SerializeField] private float rotationY;
-    [SerializeField] private float rotationZ;
-    [SerializeField] private float scaleY = 0.1f; // Default scale value for Y
-    [SerializeField] private float scaleZ = 0.1f; // Default scale value for Z
-    [SerializeField] private float yTransform = 0.0f; // Y-axis transformation
-    [SerializeField] private float zTransform = 0.0f; // Z-axis transformation
-    [SerializeField] private float scaleFactor = 0.7f; // Scaling factor
-    [SerializeField] private float scaleX = 1.0f;
+    private Camera arCamera; // Reference to the AR camera
 
     void Start()
     {
-        aRRaycastManager = FindObjectOfType<ARRaycastManager>();
+        arRaycastManager = FindObjectOfType<ARRaycastManager>();
+        arCamera = FindObjectOfType<ARCameraManager>().GetComponent<Camera>(); // Find the AR camera
     }
 
-    // need to update placement indicator, placement pose and spawn 
     void Update()
     {
-        if(spawnedObject == null)
+        if(spawnedObject == null && placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             ARPlaceObject();
         }
 
-
         UpdatePlacementPose();
         UpdatePlacementIndicator();
-
-
     }
-
 
     void UpdatePlacementIndicator()
     {
         if(spawnedObject == null && placementPoseIsValid)
         {
             placementIndicator.SetActive(true);
-            placementIndicator.transform.SetPositionAndRotation(PlacementPose.position, PlacementPose.rotation);
+            placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
         }
         else
         {
@@ -62,75 +46,109 @@ public class ARPlacement : MonoBehaviour
 
     void UpdatePlacementPose()
     {
-        var screenCenter = camera.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
+        var screenCenter = arCamera.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
         var hits = new List<ARRaycastHit>();
-        aRRaycastManager.Raycast(screenCenter, hits, TrackableType.Planes);
+        arRaycastManager.Raycast(screenCenter, hits, TrackableType.Planes);
 
         placementPoseIsValid = hits.Count > 0;
         if(placementPoseIsValid)
         {
-            PlacementPose = hits[0].pose;
+            placementPose = hits[0].pose;
         }
     }
 
-    // void ARPlaceObject()
-    // {
-    //     spawnedObject = Instantiate(arObjectToSpawn, PlacementPose.position, PlacementPose.rotation);
-    // }
-    
-    
-    
-    //  void ARPlaceObject()
-    // {
-    //     xOffset = 2.0f; // Adjust this value to set the desired distance in the X-axis
-    //     Vector3 spawnPosition = new Vector3(PlacementPose.position.x + xOffset, PlacementPose.position.y, PlacementPose.position.z);
-
-    //     spawnedObject = Instantiate(arObjectToSpawn, spawnPosition, PlacementPose.rotation);
-    // }
-
-
-    // void ARPlaceObject()
-    // {
-    //     xOffset = 3.0f; // Adjust this value to set the desired distance in the X-axis
-    //     Vector3 spawnPosition = new Vector3(PlacementPose.position.x + xOffset, PlacementPose.position.y, PlacementPose.position.z);
-
-    //     // Set rotation values from serialized fields
-    //     Quaternion spawnRotation = Quaternion.Euler(rotationX, rotationY, rotationZ);
-
-    //     spawnedObject = Instantiate(arObjectToSpawn, spawnPosition, spawnRotation);
-    // }
-
-    // void ARPlaceObject()
-    // {
-    //     xOffset = 2.0f; // Adjust this value to set the desired distance in the X-axis
-    //     Vector3 spawnPosition = new Vector3(PlacementPose.position.x + xOffset, PlacementPose.position.y + yTransform, PlacementPose.position.z + zTransform);
-
-    //     // Set rotation values from serialized fields
-    //     Quaternion spawnRotation = Quaternion.Euler(rotationX, rotationY, rotationZ);
-
-    //     spawnedObject = Instantiate(arObjectToSpawn, spawnPosition, spawnRotation);
-
-    //     // Scale the spawned object
-    //     spawnedObject.transform.localScale = new Vector3(scaleFactor, scaleY, scaleZ);
-    // }
-
-
     void ARPlaceObject()
     {
-        xOffset = 2.0f; // Adjust this value to set the desired distance in the X-axis
-        Vector3 spawnPosition = new Vector3(PlacementPose.position.x + xOffset, PlacementPose.position.y + yTransform, PlacementPose.position.z + zTransform);
-
-        // Set rotation values from serialized fields
-        Quaternion spawnRotation = Quaternion.Euler(rotationX, rotationY, rotationZ);
-
-        spawnedObject = Instantiate(arObjectToSpawn, spawnPosition, spawnRotation);
-
-        // Scale the spawned object
-        spawnedObject.transform.localScale = new Vector3(scaleX, scaleY, scaleZ);
-}
-   
-
+        spawnedObject = Instantiate(arObjectToSpawn, placementPose.position, placementPose.rotation);
+    }
 }
 
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using UnityEngine.XR.ARFoundation;
+// using UnityEngine.XR.ARSubsystems;
+// using System.Net;
+// using System.Text;
+// using System.Threading;
 
+// public class ARPlacement : MonoBehaviour
+// {
+//     public GameObject arObjectToSpawn;
+//     public GameObject placementIndicator;
+//     private GameObject spawnedObject;
+//     private ARRaycastManager arRaycastManager;
+//     private bool placementPoseIsValid = false;
+//     private Vector3 handPosition;
+
+//     UdpClient udpClient;
+//     Thread receiveThread;
+
+//     void Start()
+//     {
+//         arRaycastManager = FindObjectOfType<ARRaycastManager>();
+//         udpClient = new UdpClient(9999);
+//         receiveThread = new Thread(new ThreadStart(ReceiveHandPosition));
+//         receiveThread.IsBackground = true;
+//         receiveThread.Start();
+//     }
+
+//     void Update()
+//     {
+//         if (spawnedObject == null && placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+//         {
+//             ARPlaceObject();
+//         }
+
+//         UpdatePlacementIndicator();
+//     }
+
+//     void UpdatePlacementIndicator()
+//     {
+//         if (spawnedObject == null)
+//         {
+//             placementIndicator.SetActive(true);
+//             placementIndicator.transform.position = handPosition;
+//         }
+//         else
+//         {
+//             placementIndicator.SetActive(false);
+//         }
+//     }
+
+//     void ReceiveHandPosition()
+//     {
+//         while (true)
+//         {
+//             try
+//             {
+//                 IPEndPoint anyIP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), 0);
+//                 byte[] data = udpClient.Receive(ref anyIP);
+//                 string message = Encoding.UTF8.GetString(data);
+//                 string[] parts = message.Split(',');
+//                 float x = float.Parse(parts[0]);
+//                 float y = float.Parse(parts[1]);
+//                 float z = float.Parse(parts[2]); // Optional, depending on your needs
+
+//                 handPosition = new Vector3(x, y, z);
+//                 placementPoseIsValid = true;
+//             }
+//             catch (System.Exception e)
+//             {
+//                 Debug.Log(e.ToString());
+//             }
+//         }
+//     }
+
+//     void ARPlaceObject()
+//     {
+//         spawnedObject = Instantiate(arObjectToSpawn, handPosition, Quaternion.identity);
+//     }
+
+//     void OnApplicationQuit()
+//     {
+//         receiveThread.Abort();
+//         udpClient.Close();
+//     }
+// }
 
